@@ -1,9 +1,11 @@
 from django.shortcuts import *
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import *
 from .forms import *
 from .models import *
 from django.http import *
+
+
 
 def index(request):
     return render(request, 'index.html')
@@ -14,18 +16,14 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Log the user in
-            return redirect('personalized_home')
+            return redirect('phome')
     else:
         form = signup()
     return render(request, 'signup.html', {'form': form})
 
-
-
-#edit profile
-
 @login_required(login_url='login')
-def edit_profile(request): 
-    profile = Profile.objects.get_or_create(user=request.user)
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
@@ -35,12 +33,6 @@ def edit_profile(request):
         form = ProfileForm(instance=profile)
     return render(request, 'profile.html', {'form': form})
 
-
-
-# LOGIN 
-
-
-
 def login_(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -48,42 +40,28 @@ def login_(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('personalized_home')
+            return redirect('phome')
     return render(request, 'login.html')
-
-
-
-#LOGOUT 
-
 
 def logout_(request):
     logout(request)
     return redirect('login')
 
 
-
-# Update the home view to include posts and reload to show post updates
-
-
-
-@login_required(login_url='login')
-def home(request):
+@login_required
+def phome(request):
+    # Handle post creation
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
             post.save()
-            return redirect('home')
+            return redirect('phome')
     else:
         form = PostForm()
-    posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'home.html', {'posts': posts,'form':form})
-
-
-#personalized homepage
-@login_required
-def personalized_home(request):
+    
+    # Fetch personalized posts
     user = request.user
     profile = user.profile  # Access the user's profile
 
@@ -102,25 +80,19 @@ def personalized_home(request):
 
     context = {
         'posts': posts,
+        'form': form,
     }
 
     return render(request, 'phome.html', context)
 
-
-
-#when user comments
 
 def add_comment(request, post_id):
     if request.method == 'POST':
         post = Post.objects.get(id=post_id)
         comment_text = request.POST.get('comment')
         Comment.objects.create(post=post, user=request.user, text=comment_text)
-    return redirect('home')
+    return redirect('phome')
 
-
-
-
-#when user likes
 def like_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.user in post.likes.all():
@@ -140,15 +112,16 @@ def like_post(request, post_id):
                 'user_has_liked': user_has_liked,
             }
         })
-    return redirect('home')
-
-
-
+    return redirect('phome')
+@user_passes_test(lambda u: u.is_superuser)
+def delete_all_posts(request):
+    if request.method == 'POST':
+        Post.objects.all().delete()
+        return redirect('phome')
+    return redirect('phome')
 
 def explore(request):
     return render(request, 'explore.html')
+
 def groups(request):
     return render(request, 'groups.html')
-
-
-

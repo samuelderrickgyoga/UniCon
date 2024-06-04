@@ -118,42 +118,42 @@
 
 
 
-<!-- script to avoid the page from refreshing on likikng -->
+    <!-- script to avoid the page from refreshing on likikng -->
 
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-                }
-            }
-        });
-
-        $('.like-button').click(function(e) {
-            e.preventDefault();
-            var form = $(this).closest('form');
-            $.ajax({
-                type: form.attr('method'),
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(response) {
-                    var post = response.post;
-                    form.find('i').toggleClass('liked', post.user_has_liked);
-                    form.siblings('p').text('Liked by ' + post.no_of_likes);
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    }
                 }
             });
+
+            $('.like-button').click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        var post = response.post;
+                        form.find('i').toggleClass('liked', post.user_has_liked);
+                        form.siblings('p').text('Liked by ' + post.no_of_likes);
+                    }
+                });
+            });
         });
-    });
-</script>
+    </script>
 
 
 
 
-   
+
 
 
 
