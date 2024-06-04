@@ -1,0 +1,76 @@
+{% load static %}
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'signupp.css' %}">
+</head>
+
+<body class="signup">
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <form action="" method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="{{ form.firstname.id_for_label }}">First Name<span
+                        style="padding: 10px;"><i class="fa fa-user" aria-hidden="true"></i></span></label>
+                {{ form.firstname }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.lastname.id_for_label }}">Last Name<span
+                        style="padding: 10px;"><i class="fa fa-user" aria-hidden="true"></i></span></label>
+                {{ form.lastname }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.dob.id_for_label }}">Date of Birth<span style="padding: 10px;"><i
+                            class="fa fa-calendar" aria-hidden="true"></i></span></label>
+                {{ form.dob }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.university.id_for_label }}">University<span
+                        style="padding: 10px;"><i class="fa fa-university" aria-hidden="true"></i></span></label>
+                {{ form.university }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.student_id.id_for_label }}">Student ID<span
+                        style="padding: 10px;"><i class="fa fa-id-card" aria-hidden="true"></i></span></label>
+                {{ form.student_id }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.gender.id_for_label }}">Gender<span style="padding: 10px;"><i
+                            class="fa fa-venus-mars" aria-hidden="true"></i></span></label>
+                {{ form.gender }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.phone.id_for_label }}">Phone<span style="padding: 10px;"><i
+                            class="fa fa-phone" aria-hidden="true"></i></span></label>
+                {{ form.phone }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.profile_picture.id_for_label }}">Profile Picture<span
+                        style="padding: 10px;"><i class="fa fa-image" aria-hidden="true"></i></span></label>
+                {{ form.profile_picture }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.course.id_for_label }}">Course<span style="padding: 10px;"><i
+                            class="fa fa-book" aria-hidden="true"></i></span></label>
+                {{ form.course }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.year.id_for_label }}">Year<span style="padding: 10px;"><i
+                            class="fa fa-graduation-cap" aria-hidden="true"></i></span></label>
+                {{ form.year }}
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.interests.id_for_label }}">Interests<span
+                        style="padding: 10px;"><i class="fa fa-heart" aria-hidden="true"></i></span></label>
+                {{ form.interests }}
+            </div>
+            <button type="submit" class="btn btn-primary sign">Update Profile</button>
+        </form>
+    </div>
+</body>
+
+</html>

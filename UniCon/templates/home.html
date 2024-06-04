@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCon Home</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo-container">
+                <a href="{% url 'home' %}" class="logo">UniCon</a>
+            </div>
+            <ul>
+                <li><a href="/home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{% url 'explore' %}"><i class="fas fa-compass"></i> Explore</a></li>
+                <li><a href="{% url 'groups' %}"><i class="fas fa-users"></i> Groups</a></li>
+                <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="#" id="openModalBtn"><i class="fas fa-plus-circle"></i> Create Post</a></li>
+            </ul>
+        </nav>
+
+        <div class="main-content">
+            <!-- Stories -->
+            <div class="stories">
+                <!-- Add stories here -->
+            </div>
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Create Post</h2>
+                    <form id="postForm" method="post" enctype="multipart/form-data" action="">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit">Post</button>
+                    </form>
+                </div>
+            </div>
+            <div class="feed">
+                {% for post in posts %}
+                <div class="post">
+                    <div class="post-header">
+                        <img src="{{ profile.profile_picture }}" alt="Profile Picture" class="profile-pic">
+                        <div class="post-caption">
+                            <p><strong>{{ post.user.username }}</strong> {{ post.caption }}</p>
+                        </div>
+                    </div>
+                    <div class="post-image-container">
+                        <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                    </div>
+
+                    <div class="post-actions">
+                        <form method="post" action="{% url 'like_post' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="like-button">
+                                <i class="fas fa-heart {% if request.user in post.likes.all %}liked{% endif %}"></i>
+                            </button>
+                        </form>
+                        <p>Liked by {{ post.no_of_likes }}</p>
+                    </div>
+                    <div class="post-comments">
+                        {% for comment in post.comments.all %}
+                        <p><strong>{{ comment.user.username }}</strong> {{ comment.text }}</p>
+                        {% endfor %}
+                    </div>
+                    <form method="post" action="{% url 'add_comment' post.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="comment" placeholder="Add a comment..." class="comment-input">
+                        <button type="submit" class="comment-button">Post</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Suggested</h3>
+            <!-- Add suggestions here -->
+            <div class="copyright">
+                &copy; 2024 UniCon. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("postModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("openModalBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+
+
+
+<!-- script to avoid the page from refreshing on likikng -->
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            }
+        });
+
+        $('.like-button').click(function(e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    var post = response.post;
+                    form.find('i').toggleClass('liked', post.user_has_liked);
+                    form.siblings('p').text('Liked by ' + post.no_of_likes);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+   
+
+
+
+
+</body>
+
+</html>

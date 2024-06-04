@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Home</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Include your sidebar and other elements here -->
+
+        <div class="main-content">
+            <div class="feed">
+                {% for post in posts %}
+                <div class="post">
+                    <div class="post-header">
+                        <img src="{{ post.user.profile.profile_picture.url }}" alt="Profile Picture"
+                            class="profile-pic">
+                        <div class="post-caption">
+                            <p><strong>{{ post.user.username }}</strong> {{ post.caption }}</p>
+                        </div>
+                    </div>
+                    <div class="post-image-container">
+                        <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                    </div>
+                    <div class="post-actions">
+                        <form method="post" action="{% url 'like_post' post.id %}" class="like-form">
+                            {% csrf_token %}
+                            <button type="submit" class="like-button">
+                                <i
+                                    class="fas fa-heart {% if request.user in post.likes.all %}liked{% else %}unliked{% endif %}"></i>
+                            </button>
+                        </form>
+                        <p>Liked by <span class="like-count">{{ post.no_of_likes }}</span></p>
+                    </div>
+                    <div class="post-comments">
+                        {% for comment in post.comments.all %}
+                        <p><strong>{{ comment.user.username }}</strong> {{ comment.text }}</p>
+                        {% endfor %}
+                    </div>
+                    <form method="post" action="{% url 'add_comment' post.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="comment" placeholder="Add a comment..." class="comment-input">
+                        <button type="submit" class="comment-button">Post</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        // Handle like button with AJAX
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.like-form').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const postId = this.action.split('/').slice(-2, -1)[0];
+                    const likeButton = this.querySelector('.like-button i');
+                    const likeCountSpan = this.nextElementSibling.querySelector('.like-count');
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': this.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.liked) {
+                                likeButton.classList.remove('unliked');
+                                likeButton.classList.add('liked');
+                            } else {
+                                likeButton.classList.remove('liked');
+                                likeButton.classList.add('unliked');
+                            }
+                            likeCountSpan.textContent = data.no_of_likes;
+                        });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

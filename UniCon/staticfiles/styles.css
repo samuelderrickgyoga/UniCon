@@ -1,0 +1,258 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    background-color: #3897f0;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100vh;
+    /* Ensures full viewport height */
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: blue;
+    text-decoration: none;
+    padding: 20px 0;
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    /* Adjust margin-top as needed */
+}
+
+.sidebar {
+    width: 20%;
+    background-color: #fff;
+    padding: 20px;
+    border-right: 1px solid #dbdbdb;
+    height: 100vh;
+    /* Ensures sidebar takes full height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    /* Fixes the sidebar position */
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    /* Adds scrollbar if content overflows */
+}
+
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    padding: 10px 0;
+    display: block;
+}
+
+.main-content {
+    background-color: #fff;
+    border-right: 1px solid #dbdbdb;
+    margin-left: 20%;
+    /* Offset by the sidebar width */
+    overflow-y: auto;
+    height: 100vh;
+    /* Ensures main content takes full height */
+    width: calc(60% - 40px);
+    /* Adjust width to fit padding from both sidebars */
+    padding-left: 20px;
+    /* Add padding from left sidebar */
+    padding-right: 20px;
+    /* Add padding from right sidebar */
+}
+
+.stories {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.stories .story {
+    flex: 0 0 auto;
+    width: 80px;
+    height: 80px;
+    background-color: #ddd;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+.feed .post {
+    background-color: #fff;
+    border-bottom: 1px solid #dbdbdb;
+    margin-bottom: 20px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
+    width: auto;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-image-container {
+    /* width: 400px;
+    height: 400px; */
+    /* Set a fixed height for images */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-image {
+    width: 550px;
+    height: 400px;
+    /* Maintain aspect ratio */
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+
+.post-comments {
+    width: auto; 
+    margin-bottom: 10px;
+}
+.post-caption
+{
+    width: auto; 
+    
+}
+
+.post-comments p {
+    margin: 5px 0;
+}
+
+.right-sidebar {
+    padding: 20px;
+    background-color: #fff;
+    position: fixed;
+    /* Fixes the right sidebar position */
+    top: 0;
+    right: 0;
+    height: 100vh;
+    /* Ensures sidebar takes full height */
+    overflow-y: auto;
+    /* Adds scrollbar if content overflows */
+    width: calc(20% - 40px);
+    /* Adjust width to fit padding from both sidebars */
+    padding-right: 20px;
+    /* Add padding from right sidebar */
+    padding-left: 20px;
+    /* Add padding from left sidebar */
+}
+
+.right-sidebar .copyright {
+    position: absolute;
+    top: 200px;
+    /* bottom: 20px; */
+    /* Adjust as needed */
+    left: 20px;
+    /* Aligns with padding */
+    right: 20px;
+    /* Aligns with padding */
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar,
+    .right-sidebar {
+        width: 100%;
+        height: auto;
+        /* Allows height to adjust */
+        position: relative;
+        /* Resets fixed position */
+        padding: 10px;
+    }
+
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .stories {
+        justify-content: center;
+    }
+}
