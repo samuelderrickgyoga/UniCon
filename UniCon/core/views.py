@@ -65,18 +65,18 @@ def phome(request):
     user = request.user
     profile = user.profile  # Access the user's profile
 
-    # Filter posts based on profile attributes
-    group_posts = Post.objects.filter(user__profile__groups__in=profile.groups.all())
-    friend_posts = Post.objects.filter(user__profile__friends__in=profile.friends.all())
-    community_posts = Post.objects.filter(user__profile__communities__in=profile.communities.all())
-    college_posts = Post.objects.filter(user__profile__college=profile.college)
-    university_posts = Post.objects.filter(user__profile__university=profile.university)
-    course_posts = Post.objects.filter(user__profile__course=profile.course)
-    following_posts = Post.objects.filter(user__profile__following__in=profile.following.all())
+    # Filter posts based on profile attributes and order by creation date descending
+    group_posts = Post.objects.filter(user__profile__groups__in=profile.groups.all()).order_by('-created_at')
+    friend_posts = Post.objects.filter(user__profile__friends__in=profile.friends.all()).order_by('-created_at')
+    community_posts = Post.objects.filter(user__profile__communities__in=profile.communities.all()).order_by('-created_at')
+    college_posts = Post.objects.filter(user__profile__college=profile.college).order_by('-created_at')
+    university_posts = Post.objects.filter(user__profile__university=profile.university).order_by('-created_at')
+    course_posts = Post.objects.filter(user__profile__course=profile.course).order_by('-created_at')
+    following_posts = Post.objects.filter(user__profile__following__in=profile.following.all()).order_by('-created_at')
 
-    # Combine the querysets (assuming no duplicates)
+    # Combine the querysets (assuming no duplicates) and order by creation date descending
     posts = (group_posts | friend_posts | community_posts | college_posts |
-             university_posts | course_posts | following_posts).distinct()
+             university_posts | course_posts | following_posts).distinct().order_by('-created_at')
 
     context = {
         'posts': posts,
@@ -86,12 +86,19 @@ def phome(request):
     return render(request, 'phome.html', context)
 
 
+
 def add_comment(request, post_id):
     if request.method == 'POST':
         post = Post.objects.get(id=post_id)
         comment_text = request.POST.get('comment')
-        Comment.objects.create(post=post, user=request.user, text=comment_text)
-    return redirect('phome')
+        comment = Comment.objects.create(post=post, user=request.user, text=comment_text)
+        return JsonResponse({
+            'comment': {
+                'user': comment.user.username,
+                'text': comment.text,
+            }
+        })
+    return HttpResponseRedirect('phome')
 
 def like_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)

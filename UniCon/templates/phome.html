@@ -20,7 +20,7 @@
                 <li><a href="{% url 'phome' %}"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{% url 'explore' %}"><i class="fas fa-compass"></i> Explore</a></li>
                 <li><a href="{% url 'groups' %}"><i class="fas fa-users"></i> Groups</a></li>
-                <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="{% url 'edit_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="#" id="openModalBtn"><i class="fas fa-plus-circle"></i> Create Post</a></li>
             </ul>
         </nav>
@@ -60,17 +60,17 @@
                                 <i class="fas fa-heart {% if request.user in post.likes.all %}liked{% endif %}"></i>
                             </button>
                         </form>
-                        <p> <span class="like-count">{{ post.no_of_likes }}</span> likes</p>
+                        <p><span class="like-count">{{ post.no_of_likes }}</span> likes</p>
                     </div>
                     <div class="post-comments">
                         {% for comment in post.comments.all %}
                         <p><strong>{{ comment.user.username }}</strong> {{ comment.text }}</p>
                         {% endfor %}
                     </div>
-                    <form method="post" action="{% url 'add_comment' post.id %}">
+                    <form class="comment-form" method="post" action="{% url 'add_comment' post.id %}">
                         {% csrf_token %}
                         <input type="text" name="comment" placeholder="Add a comment..." class="comment-input">
-                        <button type="submit" class="comment-button">Post</button>
+                        <button type="submit" class="comment-button"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
                 {% endfor %}
@@ -115,7 +115,6 @@
     </script>
 
     <!-- script to avoid the page from refreshing on liking -->
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -137,7 +136,23 @@
                     success: function (response) {
                         var post = response.post;
                         form.find('i').toggleClass('liked', post.user_has_liked);
-                        form.siblings('p').text('Liked by ' + post.no_of_likes);
+                        form.siblings('p').text(post.no_of_likes + ' likes');
+                    }
+                });
+            });
+
+            $('.comment-form').submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        var comment = response.comment;
+                        var newComment = $('<p><strong>' + comment.user + '</strong> ' + comment.text + '</p>');
+                        form.closest('.post').find('.post-comments').append(newComment);
+                        form.find('.comment-input').val('');
                     }
                 });
             });
