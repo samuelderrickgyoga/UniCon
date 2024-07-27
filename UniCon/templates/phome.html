@@ -6,46 +6,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniCon Personalized Home</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'styless.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <div class="container">
-        <nav class="sidebar">
-            <div class="logo-container">
-                <a href="{% url 'phome' %}" class="logo">UniCon</a>
-            </div>
-            <ul>
-                <li><a href="{% url 'phome' %}"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="{% url 'explore' %}"><i class="fas fa-compass"></i> Explore</a></li>
-                <li><a href="{% url 'groups' %}"><i class="fas fa-users"></i> Groups</a></li>
-                <li><a href="{% url 'edit_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="#" id="openModalBtn"><i class="fas fa-plus-circle"></i> Create Post</a></li>
-            </ul>
-        </nav>
+        <div class="sidebar">
+            <nav>
+                <div class="logo-container">
+                    <a href="{% url 'phome' %}" class="logo">UniCon</a>
+                </div>
+                <ul>
+                    <li><a href="{% url 'phome' %}"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="{% url 'explore' %}"><i class="fas fa-compass"></i> Explore</a></li>
+                    <li><a href="{% url 'groups' %}"><i class="fas fa-users"></i> Groups</a></li>
+                    <li><a href="{% url 'edit_profile' %}"><img src="{{ user_profile_picture }}" alt="profilepic"
+                                class="nprofile-pic">Profile</a></li>
+                    <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                    <li><a href="#" id="openModalBtn"><i class="fas fa-plus-circle"></i> Create Post</a></li>
+                    <li><a href="#" id="openMessagesBtn"><i class="fas fa-envelope"></i> Messages</a></li>
+                </ul>
+            </nav>
+        </div>
 
         <div class="main-content">
+            <!-- <div class="test">
+                <span> Hello there </span>
+            </div> -->
             <!-- Stories -->
+
             <div class="stories">
-                <!-- Add stories here -->
-            </div>
-            <div id="postModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Create Post</h2>
-                    <form id="postForm" method="post" enctype="multipart/form-data" action="{% url 'phome' %}">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit">Post</button>
-                    </form>
+                <div class="story-add">
+                    <a href="#" id="sopenModalBtn">
+                        <img src="{{ user_profile_picture }}" alt="profilepic" class="sprofile-pic">
+                        <i class="fas fa-plus-circle"></i>
+                    </a>
                 </div>
+
+                {% for story in stories %}
+                <div class="story">
+                    <img src="{{ story.user.profile.profile_picture.url }}" alt="story-pic" class="profile-pic">
+                    <p>{{ story.user.username }}</p>
+                    <p>iheuhahgayuhdcajk</p>
+                </div>
+                {% endfor %}
             </div>
+
+
+
+
+
+            <!-- feed section -->
+
+
             <div class="feed">
+
                 {% for post in posts %}
                 <div class="post">
                     <div class="post-header">
-                        <img src="{{ post.user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+                        <img src="{{ post.user.profile.profile_picture.url }}" alt="Profile Picture"
+                            class="profile-pic">
                         <div class="post-caption">
                             <p><strong>{{ post.user.username }}</strong> {{ post.caption }}</p>
                         </div>
@@ -75,6 +96,8 @@
                 </div>
                 {% endfor %}
             </div>
+
+
         </div>
 
         <div class="right-sidebar">
@@ -85,7 +108,56 @@
             </div>
         </div>
     </div>
+    <!-- messages modal -->
 
+    <div id="messagesModal" class="messages-modal">
+        <div class="messages-modal-content">
+            <span class="close" id="closeMessagesBtn">&times;</span>
+            <h2>Messages</h2>
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be loaded here via AJAX -->
+            </div>
+            <form id="sendMessageForm" method="post" class="send-message-form">
+                {% csrf_token %}
+                <select name="receiver" id="receiverSelect">
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <textarea name="content" id="messageContent" placeholder="Type your message..."></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- modal for create posts  -->
+
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Post</h2>
+            <form id="postForm" method="post" enctype="multipart/form-data" action="{% url 'phome' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Post</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Story creation model -->
+    <div id="storymodal" class="smodal">
+        <div class="smodal-content">
+            <span class="sclose">&times;</span>
+            <h2>Add story</h2>
+            <form id="storyform" method="post" enctype="multipart/form-data" action="{% url 'phome' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Post</button>
+            </form>
+        </div>
+
+    </div>
     <script>
         // Get the modal
         var modal = document.getElementById("postModal");
@@ -114,6 +186,89 @@
         }
     </script>
 
+
+    <!-- script for story -->
+
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("storymodal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("sopenModalBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("sclose")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+    <!-- messages modal script -->
+
+        <!-- Messages modal script -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.getElementById('openMessagesBtn').onclick = function () {
+            document.getElementById('messagesModal').style.display = "block";
+            loadMessages();
+        }
+
+        document.getElementById('closeMessagesBtn').onclick = function () {
+            document.getElementById('messagesModal').style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('messagesModal')) {
+                document.getElementById('messagesModal').style.display = "none";
+            }
+        }
+
+        function loadMessages() {
+            $.ajax({
+                url: "{% url 'get_messages' %}", // Your view to get messages
+                method: "GET",
+                success: function (data) {
+                    $('#messagesContainer').html('');
+                    data.messages.forEach(message => {
+                        $('#messagesContainer').append(`<div class="message"><strong>${message.sender}</strong><p>${message.content}</p></div>`);
+                    });
+                }
+            });
+        }
+
+        $('#sendMessageForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'send_message' %}", // Your view to send messages
+                method: "POST",
+                data: {
+                    receiver: $('#receiverSelect').val(),
+                    content: $('#messageContent').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    loadMessages();
+                    $('#messageContent').val('');
+                }
+            });
+        });
+    </script>
+    
     <!-- script to avoid the page from refreshing on liking -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

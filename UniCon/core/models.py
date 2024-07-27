@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
+# profile model
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     dob = models.DateField(null=True, blank=True)
@@ -50,6 +53,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+
+# creating profile on signup
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -59,6 +65,9 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+# post model
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
@@ -71,6 +80,10 @@ class Post(models.Model):
     def __str__(self):
         return self.caption
 
+
+# comment model
+
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -80,6 +93,16 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
+
+#  story model   
+class Story(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='stories/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+# groups and posts model
 class Group(models.Model):
     name = models.CharField(max_length=100)
     members = models.ManyToManyField(Profile, related_name='group_members')
@@ -87,3 +110,16 @@ class Group(models.Model):
 class Community(models.Model):
     name = models.CharField(max_length=100)
     members = models.ManyToManyField(Profile, related_name='community_members')
+
+
+# messages model
+class Message(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.sender} to {self.receiver}'
+
+

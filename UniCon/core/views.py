@@ -1,9 +1,11 @@
 from django.shortcuts import *
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import *
 from .forms import *
 from .models import *
 from django.http import *
+from django.views.decorators.csrf import *
 
 
 
@@ -43,10 +45,29 @@ def login_(request):
             return redirect('phome')
     return render(request, 'login.html')
 
-def logout_(request):
-    logout(request)
+def logout(request):
+    auth_logout(request)
     return redirect('login')
+# story views
 
+
+def add_story(request):
+    if request.method == "POST":
+        form = StoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            story = form.save(commit=False)
+            story.user = request.user
+            story.save()
+            return redirect('phome')
+    else:
+        form = StoryForm()
+        context = {
+            'stories': stories,
+            'form': form
+        }
+    stories = Story.objects.all()
+    return render (request, 'phome.html', context)
+    
 
 @login_required
 def phome(request):
@@ -64,6 +85,7 @@ def phome(request):
     # Fetch personalized posts
     user = request.user
     profile = user.profile  # Access the user's profile
+    user_profile_picture = user.profile.profile_picture.url #fetch user's profile picture 
 
     # Filter posts based on profile attributes and order by creation date descending
     group_posts = Post.objects.filter(user__profile__groups__in=profile.groups.all()).order_by('-created_at')
@@ -81,10 +103,16 @@ def phome(request):
     context = {
         'posts': posts,
         'form': form,
+        'user_profile_picture': user_profile_picture,
     }
 
     return render(request, 'phome.html', context)
 
+
+
+
+
+# comments views
 
 
 def add_comment(request, post_id):
@@ -120,6 +148,11 @@ def like_post(request, post_id):
             }
         })
     return redirect('phome')
+
+
+# super user deletse posts
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def delete_all_posts(request):
     if request.method == 'POST':
@@ -132,3 +165,44 @@ def explore(request):
 
 def groups(request):
     return render(request, 'groups.html')
+
+# messages view
+@login_required
+def inbox(request):
+    messages_received = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+    messages_sent = Message.objects.filter(sender=request.user).order_by('-timestamp')
+    return render(request, 'inbox.html', {'messages_received': messages_received, 'messages_sent': messages_sent})
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.save()
+            return redirect('inbox')
+    else:
+        form = MessageForm()
+    return render(request, 'send_message.html', {'form': form})
+@login_required
+def get_messages(request):
+    messages_received = Message.objects.filter(receiver=request.user).order_by('-timestamp')
+    messages_sent = Message.objects.filter(sender=request.user).order_by('-timestamp')
+    messages = list(messages_received.union(messages_sent))
+    data = {
+        'messages': [
+            {'sender': msg.sender.username, 'content': msg.content, 'timestamp': msg.timestamp}
+            for msg in messages
+        ]
+    }
+    return JsonResponse(data)
+
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        receiver = User.objects.get(id=request.POST['receiver'])
+        content = request.POST['content']
+        Message.objects.create(sender=request.user, receiver=receiver, content=content)
+        return JsonResponse({'status': 'success'})

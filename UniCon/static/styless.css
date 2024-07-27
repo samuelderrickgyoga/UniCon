@@ -8,6 +8,8 @@ body {
 
 .container {
     display: flex;
+    padding-left: 250px; /* Adjust for sidebar width */
+    padding-right: 250px; /* Adjust for right-sidebar width */
 }
 
 .sidebar {
@@ -70,7 +72,6 @@ body {
 .main-content {
     flex-grow: 1;
     padding: 20px;
-    background-color: #fafafa;
     background-color: #fff;
     border-right: 1px solid #dbdbdb;
     overflow-y: auto;
@@ -78,6 +79,12 @@ body {
     width: calc(60% - 40px);
     padding-left: 20px;
     padding-right: 20px;
+}
+
+.test {
+    display: block;
+    margin-left: 700px;
+    color: rgb(247, 30, 149);
 }
 
 .feed {
@@ -133,10 +140,6 @@ body {
 
 .post-actions {
     padding: 10px;
-}
-
-.post-caption {
-    width: auto;
 }
 
 .like-button i {
@@ -260,9 +263,233 @@ body {
     font-weight: bold;
 }
 
+.smodal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.smodal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+}
+
+.sclose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.sclose:hover,
+.sclose:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.stories {
+    display: flex;
+    padding: 10px 30px;
+    overflow-x: auto;
+    border-bottom: 1px solid #dbdbdb;
+    margin-bottom: 30px;
+    background-color: #fff;
+    margin-left: auto; /* Adjust for sidebar width */
+}
+
+.stories .story {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.stories .story img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #dbdbdb;
+    padding: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.stories .story img:hover {
+    border-color: #3897f0;
+}
+
+.stories .story p {
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.stories .story-add {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.stories .story-add img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #dbdbdb;
+    padding: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.stories .story-add img:hover {
+    border-color: #3897f0;
+}
+
+.stories .story-add i {
+    font-size: 24px;
+    color: #3897f0;
+    margin-top: 30px;
+    margin-left: -38px;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 2px;
+    border: 2px solid #fff;
+}
+
+.sprofile-pic {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.nprofile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* messages */
+.messages-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.messages-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.messages-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+}
+
+.message p {
+    margin: 0;
+}
+
+.message strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.send-message-form {
+    display: flex;
+    align-items: center;
+}
+
+.send-message-form select,
+.send-message-form textarea,
+.send-message-form button {
+    margin-right: 10px;
+}
+
+.send-message-form select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.send-message-form textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    flex: 3;
+    resize: none;
+}
+
+.send-message-form button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3897f0;
+    color: white;
+    cursor: pointer;
+}
+
+.send-message-form button:hover {
+    background-color: #287dc9;
+}
+
 @media screen and (max-width: 768px) {
     .container {
         flex-direction: column;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .sidebar,
@@ -280,5 +507,6 @@ body {
 
     .stories {
         justify-content: center;
+        margin-left: 0; /* Adjust for sidebar width */
     }
 }

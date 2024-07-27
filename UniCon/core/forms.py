@@ -38,7 +38,7 @@ class ProfileForm(forms.ModelForm):
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
-# first itime signup
+# first time signup
 class signup(UserCreationForm):
     class Meta:
         model = User
@@ -66,3 +66,15 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['image', 'caption']   
+# stories section
+
+class StoryForm(forms.ModelForm):
+    class Meta:
+        model = Story
+        fields = ['image']
+
+# Message form
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['receiver', 'content']
